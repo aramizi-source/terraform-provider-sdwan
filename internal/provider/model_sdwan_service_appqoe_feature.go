@@ -481,7 +481,7 @@ func (data ServiceAppQoE) toBody(ctx context.Context) string {
 // End of section. //template:end toBody
 
 // Section below is generated&owned by "gen/generator.go". //template:begin fromBody
-func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
+func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result, fullRead bool) {
 	data.Name = types.StringValue(res.Get("payload.name").String())
 	if value := res.Get("payload.description"); value.Exists() && value.String() != "" {
 		data.Description = types.StringValue(value.String())
@@ -497,6 +497,7 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.AppqoeDeviceRole = types.StringValue(va.String())
 		}
 	}
+	oldVirtualApplications := data.VirtualApplications
 	if value := res.Get(path + "virtualApplication"); value.Exists() && len(value.Array()) > 0 {
 		data.VirtualApplications = make([]ServiceAppQoEVirtualApplications, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -514,7 +515,42 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.VirtualApplications = append(data.VirtualApplications, item)
 			return true
 		})
+	} else {
+		data.VirtualApplications = nil
 	}
+	if !fullRead && data.VirtualApplications != nil {
+		resultVirtualApplications := make([]ServiceAppQoEVirtualApplications, 0, len(data.VirtualApplications))
+		matchedVirtualApplications := make([]bool, len(data.VirtualApplications))
+		for _, oldItem := range oldVirtualApplications {
+			for ni := range data.VirtualApplications {
+				if matchedVirtualApplications[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch && (oldItem.ResourceProfileVariable.ValueString() != "" || data.VirtualApplications[ni].ResourceProfileVariable.ValueString() != "") {
+					if oldItem.ResourceProfileVariable.ValueString() != data.VirtualApplications[ni].ResourceProfileVariable.ValueString() {
+						keyMatch = false
+					}
+				} else if keyMatch {
+					if oldItem.ResourceProfile.ValueString() != data.VirtualApplications[ni].ResourceProfile.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedVirtualApplications[ni] = true
+					resultVirtualApplications = append(resultVirtualApplications, data.VirtualApplications[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.VirtualApplications {
+			if !matchedVirtualApplications[ni] {
+				resultVirtualApplications = append(resultVirtualApplications, data.VirtualApplications[ni])
+			}
+		}
+		data.VirtualApplications = resultVirtualApplications
+	}
+	oldForwarderControllerGroups := data.ForwarderControllerGroups
 	if value := res.Get(path + "forwarder.appnavControllerGroup"); value.Exists() && len(value.Array()) > 0 {
 		data.ForwarderControllerGroups = make([]ServiceAppQoEForwarderControllerGroups, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -548,7 +584,65 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.ForwarderControllerGroups = append(data.ForwarderControllerGroups, item)
 			return true
 		})
+	} else {
+		data.ForwarderControllerGroups = nil
 	}
+	if !fullRead && data.ForwarderControllerGroups != nil {
+		resultForwarderControllerGroups := make([]ServiceAppQoEForwarderControllerGroups, 0, len(data.ForwarderControllerGroups))
+		matchedForwarderControllerGroups := make([]bool, len(data.ForwarderControllerGroups))
+		for _, oldItem := range oldForwarderControllerGroups {
+			for ni := range data.ForwarderControllerGroups {
+				if matchedForwarderControllerGroups[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					matchedForwarderControllerGroups[ni] = true
+					if data.ForwarderControllerGroups[ni].AppnavControllers != nil {
+						resultC := make([]ServiceAppQoEForwarderControllerGroupsAppnavControllers, 0, len(data.ForwarderControllerGroups[ni].AppnavControllers))
+						matchedC := make([]bool, len(data.ForwarderControllerGroups[ni].AppnavControllers))
+						for _, oldCItem := range oldItem.AppnavControllers {
+							for nci := range data.ForwarderControllerGroups[ni].AppnavControllers {
+								if matchedC[nci] {
+									continue
+								}
+								keyMatchC := true
+								if keyMatchC && (oldCItem.AddressVariable.ValueString() != "" || data.ForwarderControllerGroups[ni].AppnavControllers[nci].AddressVariable.ValueString() != "") {
+									if oldCItem.AddressVariable.ValueString() != data.ForwarderControllerGroups[ni].AppnavControllers[nci].AddressVariable.ValueString() {
+										keyMatchC = false
+									}
+								} else if keyMatchC {
+									if oldCItem.Address.ValueString() != data.ForwarderControllerGroups[ni].AppnavControllers[nci].Address.ValueString() {
+										keyMatchC = false
+									}
+								}
+								if keyMatchC {
+									matchedC[nci] = true
+									resultC = append(resultC, data.ForwarderControllerGroups[ni].AppnavControllers[nci])
+									break
+								}
+							}
+						}
+						for nci := range data.ForwarderControllerGroups[ni].AppnavControllers {
+							if !matchedC[nci] {
+								resultC = append(resultC, data.ForwarderControllerGroups[ni].AppnavControllers[nci])
+							}
+						}
+						data.ForwarderControllerGroups[ni].AppnavControllers = resultC
+					}
+					resultForwarderControllerGroups = append(resultForwarderControllerGroups, data.ForwarderControllerGroups[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.ForwarderControllerGroups {
+			if !matchedForwarderControllerGroups[ni] {
+				resultForwarderControllerGroups = append(resultForwarderControllerGroups, data.ForwarderControllerGroups[ni])
+			}
+		}
+		data.ForwarderControllerGroups = resultForwarderControllerGroups
+	}
+	oldForwarderServiceNodeGroups := data.ForwarderServiceNodeGroups
 	if value := res.Get(path + "forwarder.serviceNodeGroup"); value.Exists() && len(value.Array()) > 0 {
 		data.ForwarderServiceNodeGroups = make([]ServiceAppQoEForwarderServiceNodeGroups, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -580,7 +674,66 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.ForwarderServiceNodeGroups = append(data.ForwarderServiceNodeGroups, item)
 			return true
 		})
+	} else {
+		data.ForwarderServiceNodeGroups = nil
 	}
+	if !fullRead && data.ForwarderServiceNodeGroups != nil {
+		resultForwarderServiceNodeGroups := make([]ServiceAppQoEForwarderServiceNodeGroups, 0, len(data.ForwarderServiceNodeGroups))
+		matchedForwarderServiceNodeGroups := make([]bool, len(data.ForwarderServiceNodeGroups))
+		for _, oldItem := range oldForwarderServiceNodeGroups {
+			for ni := range data.ForwarderServiceNodeGroups {
+				if matchedForwarderServiceNodeGroups[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.Name.ValueString() != data.ForwarderServiceNodeGroups[ni].Name.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedForwarderServiceNodeGroups[ni] = true
+					if data.ForwarderServiceNodeGroups[ni].ServiceNodes != nil {
+						resultC := make([]ServiceAppQoEForwarderServiceNodeGroupsServiceNodes, 0, len(data.ForwarderServiceNodeGroups[ni].ServiceNodes))
+						matchedC := make([]bool, len(data.ForwarderServiceNodeGroups[ni].ServiceNodes))
+						for _, oldCItem := range oldItem.ServiceNodes {
+							for nci := range data.ForwarderServiceNodeGroups[ni].ServiceNodes {
+								if matchedC[nci] {
+									continue
+								}
+								keyMatchC := true
+								if keyMatchC {
+									if oldCItem.Address.ValueString() != data.ForwarderServiceNodeGroups[ni].ServiceNodes[nci].Address.ValueString() {
+										keyMatchC = false
+									}
+								}
+								if keyMatchC {
+									matchedC[nci] = true
+									resultC = append(resultC, data.ForwarderServiceNodeGroups[ni].ServiceNodes[nci])
+									break
+								}
+							}
+						}
+						for nci := range data.ForwarderServiceNodeGroups[ni].ServiceNodes {
+							if !matchedC[nci] {
+								resultC = append(resultC, data.ForwarderServiceNodeGroups[ni].ServiceNodes[nci])
+							}
+						}
+						data.ForwarderServiceNodeGroups[ni].ServiceNodes = resultC
+					}
+					resultForwarderServiceNodeGroups = append(resultForwarderServiceNodeGroups, data.ForwarderServiceNodeGroups[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.ForwarderServiceNodeGroups {
+			if !matchedForwarderServiceNodeGroups[ni] {
+				resultForwarderServiceNodeGroups = append(resultForwarderServiceNodeGroups, data.ForwarderServiceNodeGroups[ni])
+			}
+		}
+		data.ForwarderServiceNodeGroups = resultForwarderServiceNodeGroups
+	}
+	oldForwarderServiceContexts := data.ForwarderServiceContexts
 	if value := res.Get(path + "forwarder.serviceContext.appqoe"); value.Exists() && len(value.Array()) > 0 {
 		data.ForwarderServiceContexts = make([]ServiceAppQoEForwarderServiceContexts, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -622,7 +775,38 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.ForwarderServiceContexts = append(data.ForwarderServiceContexts, item)
 			return true
 		})
+	} else {
+		data.ForwarderServiceContexts = nil
 	}
+	if !fullRead && data.ForwarderServiceContexts != nil {
+		resultForwarderServiceContexts := make([]ServiceAppQoEForwarderServiceContexts, 0, len(data.ForwarderServiceContexts))
+		matchedForwarderServiceContexts := make([]bool, len(data.ForwarderServiceContexts))
+		for _, oldItem := range oldForwarderServiceContexts {
+			for ni := range data.ForwarderServiceContexts {
+				if matchedForwarderServiceContexts[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.AppnavControllerGroup.ValueString() != data.ForwarderServiceContexts[ni].AppnavControllerGroup.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedForwarderServiceContexts[ni] = true
+					resultForwarderServiceContexts = append(resultForwarderServiceContexts, data.ForwarderServiceContexts[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.ForwarderServiceContexts {
+			if !matchedForwarderServiceContexts[ni] {
+				resultForwarderServiceContexts = append(resultForwarderServiceContexts, data.ForwarderServiceContexts[ni])
+			}
+		}
+		data.ForwarderServiceContexts = resultForwarderServiceContexts
+	}
+	oldCombinedControllerGroups := data.CombinedControllerGroups
 	if value := res.Get(path + "forwarderAndServiceNode.appnavControllerGroup"); value.Exists() && len(value.Array()) > 0 {
 		data.CombinedControllerGroups = make([]ServiceAppQoECombinedControllerGroups, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -654,7 +838,66 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.CombinedControllerGroups = append(data.CombinedControllerGroups, item)
 			return true
 		})
+	} else {
+		data.CombinedControllerGroups = nil
 	}
+	if !fullRead && data.CombinedControllerGroups != nil {
+		resultCombinedControllerGroups := make([]ServiceAppQoECombinedControllerGroups, 0, len(data.CombinedControllerGroups))
+		matchedCombinedControllerGroups := make([]bool, len(data.CombinedControllerGroups))
+		for _, oldItem := range oldCombinedControllerGroups {
+			for ni := range data.CombinedControllerGroups {
+				if matchedCombinedControllerGroups[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.GroupName.ValueString() != data.CombinedControllerGroups[ni].GroupName.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedCombinedControllerGroups[ni] = true
+					if data.CombinedControllerGroups[ni].AppnavControllers != nil {
+						resultC := make([]ServiceAppQoECombinedControllerGroupsAppnavControllers, 0, len(data.CombinedControllerGroups[ni].AppnavControllers))
+						matchedC := make([]bool, len(data.CombinedControllerGroups[ni].AppnavControllers))
+						for _, oldCItem := range oldItem.AppnavControllers {
+							for nci := range data.CombinedControllerGroups[ni].AppnavControllers {
+								if matchedC[nci] {
+									continue
+								}
+								keyMatchC := true
+								if keyMatchC {
+									if oldCItem.Address.ValueString() != data.CombinedControllerGroups[ni].AppnavControllers[nci].Address.ValueString() {
+										keyMatchC = false
+									}
+								}
+								if keyMatchC {
+									matchedC[nci] = true
+									resultC = append(resultC, data.CombinedControllerGroups[ni].AppnavControllers[nci])
+									break
+								}
+							}
+						}
+						for nci := range data.CombinedControllerGroups[ni].AppnavControllers {
+							if !matchedC[nci] {
+								resultC = append(resultC, data.CombinedControllerGroups[ni].AppnavControllers[nci])
+							}
+						}
+						data.CombinedControllerGroups[ni].AppnavControllers = resultC
+					}
+					resultCombinedControllerGroups = append(resultCombinedControllerGroups, data.CombinedControllerGroups[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.CombinedControllerGroups {
+			if !matchedCombinedControllerGroups[ni] {
+				resultCombinedControllerGroups = append(resultCombinedControllerGroups, data.CombinedControllerGroups[ni])
+			}
+		}
+		data.CombinedControllerGroups = resultCombinedControllerGroups
+	}
+	oldCombinedServiceNodeGroups := data.CombinedServiceNodeGroups
 	if value := res.Get(path + "forwarderAndServiceNode.serviceNodeGroup"); value.Exists() && len(value.Array()) > 0 {
 		data.CombinedServiceNodeGroups = make([]ServiceAppQoECombinedServiceNodeGroups, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -686,7 +929,66 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.CombinedServiceNodeGroups = append(data.CombinedServiceNodeGroups, item)
 			return true
 		})
+	} else {
+		data.CombinedServiceNodeGroups = nil
 	}
+	if !fullRead && data.CombinedServiceNodeGroups != nil {
+		resultCombinedServiceNodeGroups := make([]ServiceAppQoECombinedServiceNodeGroups, 0, len(data.CombinedServiceNodeGroups))
+		matchedCombinedServiceNodeGroups := make([]bool, len(data.CombinedServiceNodeGroups))
+		for _, oldItem := range oldCombinedServiceNodeGroups {
+			for ni := range data.CombinedServiceNodeGroups {
+				if matchedCombinedServiceNodeGroups[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.Name.ValueString() != data.CombinedServiceNodeGroups[ni].Name.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedCombinedServiceNodeGroups[ni] = true
+					if data.CombinedServiceNodeGroups[ni].ServiceNodes != nil {
+						resultC := make([]ServiceAppQoECombinedServiceNodeGroupsServiceNodes, 0, len(data.CombinedServiceNodeGroups[ni].ServiceNodes))
+						matchedC := make([]bool, len(data.CombinedServiceNodeGroups[ni].ServiceNodes))
+						for _, oldCItem := range oldItem.ServiceNodes {
+							for nci := range data.CombinedServiceNodeGroups[ni].ServiceNodes {
+								if matchedC[nci] {
+									continue
+								}
+								keyMatchC := true
+								if keyMatchC {
+									if oldCItem.Address.ValueString() != data.CombinedServiceNodeGroups[ni].ServiceNodes[nci].Address.ValueString() {
+										keyMatchC = false
+									}
+								}
+								if keyMatchC {
+									matchedC[nci] = true
+									resultC = append(resultC, data.CombinedServiceNodeGroups[ni].ServiceNodes[nci])
+									break
+								}
+							}
+						}
+						for nci := range data.CombinedServiceNodeGroups[ni].ServiceNodes {
+							if !matchedC[nci] {
+								resultC = append(resultC, data.CombinedServiceNodeGroups[ni].ServiceNodes[nci])
+							}
+						}
+						data.CombinedServiceNodeGroups[ni].ServiceNodes = resultC
+					}
+					resultCombinedServiceNodeGroups = append(resultCombinedServiceNodeGroups, data.CombinedServiceNodeGroups[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.CombinedServiceNodeGroups {
+			if !matchedCombinedServiceNodeGroups[ni] {
+				resultCombinedServiceNodeGroups = append(resultCombinedServiceNodeGroups, data.CombinedServiceNodeGroups[ni])
+			}
+		}
+		data.CombinedServiceNodeGroups = resultCombinedServiceNodeGroups
+	}
+	oldCombinedServiceContexts := data.CombinedServiceContexts
 	if value := res.Get(path + "forwarderAndServiceNode.serviceContext.appqoe"); value.Exists() && len(value.Array()) > 0 {
 		data.CombinedServiceContexts = make([]ServiceAppQoECombinedServiceContexts, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -728,7 +1030,38 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.CombinedServiceContexts = append(data.CombinedServiceContexts, item)
 			return true
 		})
+	} else {
+		data.CombinedServiceContexts = nil
 	}
+	if !fullRead && data.CombinedServiceContexts != nil {
+		resultCombinedServiceContexts := make([]ServiceAppQoECombinedServiceContexts, 0, len(data.CombinedServiceContexts))
+		matchedCombinedServiceContexts := make([]bool, len(data.CombinedServiceContexts))
+		for _, oldItem := range oldCombinedServiceContexts {
+			for ni := range data.CombinedServiceContexts {
+				if matchedCombinedServiceContexts[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.AppnavControllerGroup.ValueString() != data.CombinedServiceContexts[ni].AppnavControllerGroup.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedCombinedServiceContexts[ni] = true
+					resultCombinedServiceContexts = append(resultCombinedServiceContexts, data.CombinedServiceContexts[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.CombinedServiceContexts {
+			if !matchedCombinedServiceContexts[ni] {
+				resultCombinedServiceContexts = append(resultCombinedServiceContexts, data.CombinedServiceContexts[ni])
+			}
+		}
+		data.CombinedServiceContexts = resultCombinedServiceContexts
+	}
+	oldServiceNodeServiceNodeGroups := data.ServiceNodeServiceNodeGroups
 	if value := res.Get(path + "serviceNode.serviceNodeGroup"); value.Exists() && len(value.Array()) > 0 {
 		data.ServiceNodeServiceNodeGroups = make([]ServiceAppQoEServiceNodeServiceNodeGroups, 0)
 		value.ForEach(func(k, v gjson.Result) bool {
@@ -768,697 +1101,65 @@ func (data *ServiceAppQoE) fromBody(ctx context.Context, res gjson.Result) {
 			data.ServiceNodeServiceNodeGroups = append(data.ServiceNodeServiceNodeGroups, item)
 			return true
 		})
+	} else {
+		data.ServiceNodeServiceNodeGroups = nil
+	}
+	if !fullRead && data.ServiceNodeServiceNodeGroups != nil {
+		resultServiceNodeServiceNodeGroups := make([]ServiceAppQoEServiceNodeServiceNodeGroups, 0, len(data.ServiceNodeServiceNodeGroups))
+		matchedServiceNodeServiceNodeGroups := make([]bool, len(data.ServiceNodeServiceNodeGroups))
+		for _, oldItem := range oldServiceNodeServiceNodeGroups {
+			for ni := range data.ServiceNodeServiceNodeGroups {
+				if matchedServiceNodeServiceNodeGroups[ni] {
+					continue
+				}
+				keyMatch := true
+				if keyMatch {
+					if oldItem.Name.ValueString() != data.ServiceNodeServiceNodeGroups[ni].Name.ValueString() {
+						keyMatch = false
+					}
+				}
+				if keyMatch {
+					matchedServiceNodeServiceNodeGroups[ni] = true
+					if data.ServiceNodeServiceNodeGroups[ni].ServiceNodes != nil {
+						resultC := make([]ServiceAppQoEServiceNodeServiceNodeGroupsServiceNodes, 0, len(data.ServiceNodeServiceNodeGroups[ni].ServiceNodes))
+						matchedC := make([]bool, len(data.ServiceNodeServiceNodeGroups[ni].ServiceNodes))
+						for _, oldCItem := range oldItem.ServiceNodes {
+							for nci := range data.ServiceNodeServiceNodeGroups[ni].ServiceNodes {
+								if matchedC[nci] {
+									continue
+								}
+								keyMatchC := true
+								if keyMatchC {
+									if oldCItem.Address.ValueString() != data.ServiceNodeServiceNodeGroups[ni].ServiceNodes[nci].Address.ValueString() {
+										keyMatchC = false
+									}
+								}
+								if keyMatchC {
+									matchedC[nci] = true
+									resultC = append(resultC, data.ServiceNodeServiceNodeGroups[ni].ServiceNodes[nci])
+									break
+								}
+							}
+						}
+						for nci := range data.ServiceNodeServiceNodeGroups[ni].ServiceNodes {
+							if !matchedC[nci] {
+								resultC = append(resultC, data.ServiceNodeServiceNodeGroups[ni].ServiceNodes[nci])
+							}
+						}
+						data.ServiceNodeServiceNodeGroups[ni].ServiceNodes = resultC
+					}
+					resultServiceNodeServiceNodeGroups = append(resultServiceNodeServiceNodeGroups, data.ServiceNodeServiceNodeGroups[ni])
+					break
+				}
+			}
+		}
+		for ni := range data.ServiceNodeServiceNodeGroups {
+			if !matchedServiceNodeServiceNodeGroups[ni] {
+				resultServiceNodeServiceNodeGroups = append(resultServiceNodeServiceNodeGroups, data.ServiceNodeServiceNodeGroups[ni])
+			}
+		}
+		data.ServiceNodeServiceNodeGroups = resultServiceNodeServiceNodeGroups
 	}
 }
 
 // End of section. //template:end fromBody
-
-// Section below is generated&owned by "gen/generator.go". //template:begin updateFromBody
-func (data *ServiceAppQoE) updateFromBody(ctx context.Context, res gjson.Result) {
-	data.Name = types.StringValue(res.Get("payload.name").String())
-	if value := res.Get("payload.description"); value.Exists() && value.String() != "" {
-		data.Description = types.StringValue(value.String())
-	} else {
-		data.Description = types.StringNull()
-	}
-	path := "payload.data."
-	data.AppqoeDeviceRole = types.StringNull()
-
-	if t := res.Get(path + "appqoeDeviceRole.optionType"); t.Exists() {
-		va := res.Get(path + "appqoeDeviceRole.value")
-		if t.String() == "global" {
-			data.AppqoeDeviceRole = types.StringValue(va.String())
-		}
-	}
-	for i := range data.VirtualApplications {
-		keys := [...]string{"resourceProfile"}
-		keyValues := [...]string{data.VirtualApplications[i].ResourceProfile.ValueString()}
-		keyValuesVariables := [...]string{data.VirtualApplications[i].ResourceProfileVariable.ValueString()}
-
-		var r gjson.Result
-		res.Get(path + "virtualApplication").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "virtualApplication").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		data.VirtualApplications[i].ResourceProfile = types.StringNull()
-		data.VirtualApplications[i].ResourceProfileVariable = types.StringNull()
-		if t := r.Get("resourceProfile.optionType"); t.Exists() {
-			va := r.Get("resourceProfile.value")
-			if t.String() == "variable" {
-				data.VirtualApplications[i].ResourceProfileVariable = types.StringValue(va.String())
-			} else if t.String() == "global" {
-				data.VirtualApplications[i].ResourceProfile = types.StringValue(va.String())
-			}
-		}
-	}
-	for i := range data.ForwarderControllerGroups {
-		keys := [...]string{}
-		keyValues := [...]string{}
-		keyValuesVariables := [...]string{}
-
-		var r gjson.Result
-		res.Get(path + "forwarder.appnavControllerGroup").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarder.appnavControllerGroup").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		for ci := range data.ForwarderControllerGroups[i].AppnavControllers {
-			keys := [...]string{"address"}
-			keyValues := [...]string{data.ForwarderControllerGroups[i].AppnavControllers[ci].Address.ValueString()}
-			keyValuesVariables := [...]string{data.ForwarderControllerGroups[i].AppnavControllers[ci].AddressVariable.ValueString()}
-
-			var cr gjson.Result
-			r.Get("appnavControllers").ForEach(
-				func(_, v gjson.Result) bool {
-					found := false
-					for ik := range keys {
-						tt := v.Get(keys[ik] + ".optionType")
-						vv := v.Get(keys[ik] + ".value")
-						if tt.Exists() && vv.Exists() {
-							if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-								found = true
-								continue
-							} else if tt.String() == "default" {
-								continue
-							}
-							found = false
-							break
-						}
-						continue
-					}
-					if found {
-						cr = v
-						return false
-					}
-					return true
-				},
-			)
-			if !cr.Exists() {
-				arr := r.Get("appnavControllers").Array()
-				if ci < len(arr) {
-					cr = arr[ci]
-				}
-			}
-			data.ForwarderControllerGroups[i].AppnavControllers[ci].Address = types.StringNull()
-			data.ForwarderControllerGroups[i].AppnavControllers[ci].AddressVariable = types.StringNull()
-			if t := cr.Get("address.optionType"); t.Exists() {
-				va := cr.Get("address.value")
-				if t.String() == "variable" {
-					data.ForwarderControllerGroups[i].AppnavControllers[ci].AddressVariable = types.StringValue(va.String())
-				} else if t.String() == "global" {
-					data.ForwarderControllerGroups[i].AppnavControllers[ci].Address = types.StringValue(va.String())
-				}
-			}
-			data.ForwarderControllerGroups[i].AppnavControllers[ci].Vpn = types.Int64Null()
-
-			if t := cr.Get("vpn.optionType"); t.Exists() {
-				va := cr.Get("vpn.value")
-				if t.String() == "global" {
-					data.ForwarderControllerGroups[i].AppnavControllers[ci].Vpn = types.Int64Value(va.Int())
-				}
-			}
-		}
-	}
-	for i := range data.ForwarderServiceNodeGroups {
-		keys := [...]string{"name"}
-		keyValues := [...]string{data.ForwarderServiceNodeGroups[i].Name.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "forwarder.serviceNodeGroup").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarder.serviceNodeGroup").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		data.ForwarderServiceNodeGroups[i].Name = types.StringNull()
-
-		if t := r.Get("name.optionType"); t.Exists() {
-			va := r.Get("name.value")
-			if t.String() == "global" {
-				data.ForwarderServiceNodeGroups[i].Name = types.StringValue(va.String())
-			}
-		}
-		for ci := range data.ForwarderServiceNodeGroups[i].ServiceNodes {
-			keys := [...]string{"address"}
-			keyValues := [...]string{data.ForwarderServiceNodeGroups[i].ServiceNodes[ci].Address.ValueString()}
-			keyValuesVariables := [...]string{""}
-
-			var cr gjson.Result
-			r.Get("serviceNode").ForEach(
-				func(_, v gjson.Result) bool {
-					found := false
-					for ik := range keys {
-						tt := v.Get(keys[ik] + ".optionType")
-						vv := v.Get(keys[ik] + ".value")
-						if tt.Exists() && vv.Exists() {
-							if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-								found = true
-								continue
-							} else if tt.String() == "default" {
-								continue
-							}
-							found = false
-							break
-						}
-						continue
-					}
-					if found {
-						cr = v
-						return false
-					}
-					return true
-				},
-			)
-			if !cr.Exists() {
-				arr := r.Get("serviceNode").Array()
-				if ci < len(arr) {
-					cr = arr[ci]
-				}
-			}
-			data.ForwarderServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringNull()
-
-			if t := cr.Get("address.optionType"); t.Exists() {
-				va := cr.Get("address.value")
-				if t.String() == "global" {
-					data.ForwarderServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringValue(va.String())
-				}
-			}
-		}
-	}
-	for i := range data.ForwarderServiceContexts {
-		keys := [...]string{"appnavControllerGroup"}
-		keyValues := [...]string{data.ForwarderServiceContexts[i].AppnavControllerGroup.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "forwarder.serviceContext.appqoe").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarder.serviceContext.appqoe").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		data.ForwarderServiceContexts[i].AppnavControllerGroup = types.StringNull()
-
-		if t := r.Get("appnavControllerGroup.optionType"); t.Exists() {
-			va := r.Get("appnavControllerGroup.value")
-			if t.String() == "global" {
-				data.ForwarderServiceContexts[i].AppnavControllerGroup = types.StringValue(va.String())
-			}
-		}
-		data.ForwarderServiceContexts[i].ServiceNodeGroup = types.StringNull()
-
-		if t := r.Get("serviceNodeGroup.optionType"); t.Exists() {
-			va := r.Get("serviceNodeGroup.value")
-			if t.String() == "global" {
-				data.ForwarderServiceContexts[i].ServiceNodeGroup = types.StringValue(va.String())
-			}
-		}
-		data.ForwarderServiceContexts[i].Enable = types.BoolNull()
-
-		if t := r.Get("enable.optionType"); t.Exists() {
-			va := r.Get("enable.value")
-			if t.String() == "global" {
-				data.ForwarderServiceContexts[i].Enable = types.BoolValue(va.Bool())
-			}
-		}
-		data.ForwarderServiceContexts[i].Vpn = types.Int64Null()
-		data.ForwarderServiceContexts[i].VpnVariable = types.StringNull()
-		if t := r.Get("vpn.optionType"); t.Exists() {
-			va := r.Get("vpn.value")
-			if t.String() == "variable" {
-				data.ForwarderServiceContexts[i].VpnVariable = types.StringValue(va.String())
-			} else if t.String() == "global" {
-				data.ForwarderServiceContexts[i].Vpn = types.Int64Value(va.Int())
-			}
-		}
-	}
-	for i := range data.CombinedControllerGroups {
-		keys := [...]string{"groupName"}
-		keyValues := [...]string{data.CombinedControllerGroups[i].GroupName.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "forwarderAndServiceNode.appnavControllerGroup").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarderAndServiceNode.appnavControllerGroup").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		tempGroupName := data.CombinedControllerGroups[i].GroupName
-		data.CombinedControllerGroups[i].GroupName = types.StringNull()
-
-		if t := r.Get("groupName.optionType"); t.Exists() {
-			va := r.Get("groupName.value")
-			if t.String() == "global" || (t.String() == "default" && !tempGroupName.IsNull()) {
-				data.CombinedControllerGroups[i].GroupName = types.StringValue(va.String())
-			}
-		}
-		for ci := range data.CombinedControllerGroups[i].AppnavControllers {
-			keys := [...]string{"address"}
-			keyValues := [...]string{data.CombinedControllerGroups[i].AppnavControllers[ci].Address.ValueString()}
-			keyValuesVariables := [...]string{""}
-
-			var cr gjson.Result
-			r.Get("appnavControllers").ForEach(
-				func(_, v gjson.Result) bool {
-					found := false
-					for ik := range keys {
-						tt := v.Get(keys[ik] + ".optionType")
-						vv := v.Get(keys[ik] + ".value")
-						if tt.Exists() && vv.Exists() {
-							if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-								found = true
-								continue
-							} else if tt.String() == "default" {
-								continue
-							}
-							found = false
-							break
-						}
-						continue
-					}
-					if found {
-						cr = v
-						return false
-					}
-					return true
-				},
-			)
-			if !cr.Exists() {
-				arr := r.Get("appnavControllers").Array()
-				if ci < len(arr) {
-					cr = arr[ci]
-				}
-			}
-			tempAddress := data.CombinedControllerGroups[i].AppnavControllers[ci].Address
-			data.CombinedControllerGroups[i].AppnavControllers[ci].Address = types.StringNull()
-
-			if t := cr.Get("address.optionType"); t.Exists() {
-				va := cr.Get("address.value")
-				if t.String() == "global" || (t.String() == "default" && !tempAddress.IsNull()) {
-					data.CombinedControllerGroups[i].AppnavControllers[ci].Address = types.StringValue(va.String())
-				}
-			}
-		}
-	}
-	for i := range data.CombinedServiceNodeGroups {
-		keys := [...]string{"name"}
-		keyValues := [...]string{data.CombinedServiceNodeGroups[i].Name.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "forwarderAndServiceNode.serviceNodeGroup").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarderAndServiceNode.serviceNodeGroup").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		tempName := data.CombinedServiceNodeGroups[i].Name
-		data.CombinedServiceNodeGroups[i].Name = types.StringNull()
-
-		if t := r.Get("name.optionType"); t.Exists() {
-			va := r.Get("name.value")
-			if t.String() == "global" || (t.String() == "default" && !tempName.IsNull()) {
-				data.CombinedServiceNodeGroups[i].Name = types.StringValue(va.String())
-			}
-		}
-		for ci := range data.CombinedServiceNodeGroups[i].ServiceNodes {
-			keys := [...]string{"address"}
-			keyValues := [...]string{data.CombinedServiceNodeGroups[i].ServiceNodes[ci].Address.ValueString()}
-			keyValuesVariables := [...]string{""}
-
-			var cr gjson.Result
-			r.Get("serviceNode").ForEach(
-				func(_, v gjson.Result) bool {
-					found := false
-					for ik := range keys {
-						tt := v.Get(keys[ik] + ".optionType")
-						vv := v.Get(keys[ik] + ".value")
-						if tt.Exists() && vv.Exists() {
-							if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-								found = true
-								continue
-							} else if tt.String() == "default" {
-								continue
-							}
-							found = false
-							break
-						}
-						continue
-					}
-					if found {
-						cr = v
-						return false
-					}
-					return true
-				},
-			)
-			if !cr.Exists() {
-				arr := r.Get("serviceNode").Array()
-				if ci < len(arr) {
-					cr = arr[ci]
-				}
-			}
-			tempAddress := data.CombinedServiceNodeGroups[i].ServiceNodes[ci].Address
-			data.CombinedServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringNull()
-
-			if t := cr.Get("address.optionType"); t.Exists() {
-				va := cr.Get("address.value")
-				if t.String() == "global" || (t.String() == "default" && !tempAddress.IsNull()) {
-					data.CombinedServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringValue(va.String())
-				}
-			}
-		}
-	}
-	for i := range data.CombinedServiceContexts {
-		keys := [...]string{"appnavControllerGroup"}
-		keyValues := [...]string{data.CombinedServiceContexts[i].AppnavControllerGroup.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "forwarderAndServiceNode.serviceContext.appqoe").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "forwarderAndServiceNode.serviceContext.appqoe").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		data.CombinedServiceContexts[i].AppnavControllerGroup = types.StringNull()
-
-		if t := r.Get("appnavControllerGroup.optionType"); t.Exists() {
-			va := r.Get("appnavControllerGroup.value")
-			if t.String() == "global" {
-				data.CombinedServiceContexts[i].AppnavControllerGroup = types.StringValue(va.String())
-			}
-		}
-		data.CombinedServiceContexts[i].ServiceNodeGroup = types.StringNull()
-
-		if t := r.Get("serviceNodeGroup.optionType"); t.Exists() {
-			va := r.Get("serviceNodeGroup.value")
-			if t.String() == "global" {
-				data.CombinedServiceContexts[i].ServiceNodeGroup = types.StringValue(va.String())
-			}
-		}
-		data.CombinedServiceContexts[i].Enable = types.BoolNull()
-
-		if t := r.Get("enable.optionType"); t.Exists() {
-			va := r.Get("enable.value")
-			if t.String() == "global" {
-				data.CombinedServiceContexts[i].Enable = types.BoolValue(va.Bool())
-			}
-		}
-		data.CombinedServiceContexts[i].Vpn = types.Int64Null()
-		data.CombinedServiceContexts[i].VpnVariable = types.StringNull()
-		if t := r.Get("vpn.optionType"); t.Exists() {
-			va := r.Get("vpn.value")
-			if t.String() == "variable" {
-				data.CombinedServiceContexts[i].VpnVariable = types.StringValue(va.String())
-			} else if t.String() == "global" {
-				data.CombinedServiceContexts[i].Vpn = types.Int64Value(va.Int())
-			}
-		}
-	}
-	for i := range data.ServiceNodeServiceNodeGroups {
-		keys := [...]string{"name"}
-		keyValues := [...]string{data.ServiceNodeServiceNodeGroups[i].Name.ValueString()}
-		keyValuesVariables := [...]string{""}
-
-		var r gjson.Result
-		res.Get(path + "serviceNode.serviceNodeGroup").ForEach(
-			func(_, v gjson.Result) bool {
-				found := false
-				for ik := range keys {
-					tt := v.Get(keys[ik] + ".optionType")
-					vv := v.Get(keys[ik] + ".value")
-					if tt.Exists() && vv.Exists() {
-						if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-							found = true
-							continue
-						} else if tt.String() == "default" {
-							continue
-						}
-						found = false
-						break
-					}
-					continue
-				}
-				if found {
-					r = v
-					return false
-				}
-				return true
-			},
-		)
-		if !r.Exists() {
-			arr := res.Get(path + "serviceNode.serviceNodeGroup").Array()
-			if i < len(arr) {
-				r = arr[i]
-			}
-		}
-		tempName := data.ServiceNodeServiceNodeGroups[i].Name
-		data.ServiceNodeServiceNodeGroups[i].Name = types.StringNull()
-
-		if t := r.Get("name.optionType"); t.Exists() {
-			va := r.Get("name.value")
-			if t.String() == "global" || (t.String() == "default" && !tempName.IsNull()) {
-				data.ServiceNodeServiceNodeGroups[i].Name = types.StringValue(va.String())
-			}
-		}
-		for ci := range data.ServiceNodeServiceNodeGroups[i].ServiceNodes {
-			keys := [...]string{"address"}
-			keyValues := [...]string{data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].Address.ValueString()}
-			keyValuesVariables := [...]string{""}
-
-			var cr gjson.Result
-			r.Get("serviceNode").ForEach(
-				func(_, v gjson.Result) bool {
-					found := false
-					for ik := range keys {
-						tt := v.Get(keys[ik] + ".optionType")
-						vv := v.Get(keys[ik] + ".value")
-						if tt.Exists() && vv.Exists() {
-							if (tt.String() == "variable" && vv.String() == keyValuesVariables[ik]) || (tt.String() == "global" && vv.String() == keyValues[ik]) {
-								found = true
-								continue
-							} else if tt.String() == "default" {
-								continue
-							}
-							found = false
-							break
-						}
-						continue
-					}
-					if found {
-						cr = v
-						return false
-					}
-					return true
-				},
-			)
-			if !cr.Exists() {
-				arr := r.Get("serviceNode").Array()
-				if ci < len(arr) {
-					cr = arr[ci]
-				}
-			}
-			tempAddress := data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].Address
-			data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringNull()
-
-			if t := cr.Get("address.optionType"); t.Exists() {
-				va := cr.Get("address.value")
-				if t.String() == "global" || (t.String() == "default" && !tempAddress.IsNull()) {
-					data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].Address = types.StringValue(va.String())
-				}
-			}
-			tempVpgIp := data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].VpgIp
-			data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].VpgIp = types.StringNull()
-
-			if t := cr.Get("vpgIp.optionType"); t.Exists() {
-				va := cr.Get("vpgIp.value")
-				if t.String() == "global" || (t.String() == "default" && !tempVpgIp.IsNull()) {
-					data.ServiceNodeServiceNodeGroups[i].ServiceNodes[ci].VpgIp = types.StringValue(va.String())
-				}
-			}
-		}
-	}
-}
-
-// End of section. //template:end updateFromBody
